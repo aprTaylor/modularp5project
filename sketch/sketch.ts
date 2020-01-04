@@ -1,33 +1,25 @@
-let angle = 0;
-let squares = 10;
-let colors: p5.Color[];
+import p5 from "p5"
+import PackageManager from "./core/packageManager";
+import Package from "./core/package";
+import Shape from "./modules/Shape"
 
-function setup() {
-    createCanvas(windowWidth, windowHeight);
-    rectMode(CENTER);
-    colors = ColorHelper.getColorsArray(squares);
-}
+let packageManager: PackageManager;
 
-function draw() {
-
-    background(51);
-
-    translate((width / 2), (height / 2));
-    angle = angle + 0.01;
-    rotate(angle);
-
-    for (var i = 0; i < squares; i++) {
-        strokeWeight(2);
-        stroke(colors[i]);
-        noFill();
-        beginShape();
-
-        let points = Shapes.star(0, 0, 10 * i, 20 * i, 5);
-        for (var x = 0; x < points.length; x++) {
-            var v = points[x]
-            vertex(v.x, v.y);
-        }
-        endShape(CLOSE);
+function sketch (p: p5) {
+    p.setup = function () {
+        p.createCanvas(p.windowWidth, p.windowHeight);
+        p.rectMode(p.CENTER);
+        //colors = ColorHelper.getColorsArray(squares);
+        packageManager = new PackageManager()
+            .add(new Package("dot", [new Shape(p, 'ellipse', 100, 100)], {x: 100, y: 200}))
     }
 
+    p.draw = function draw() {
+
+        p.background(51);
+    
+        packageManager.update()
+    }    
 }
+
+new p5(sketch)
