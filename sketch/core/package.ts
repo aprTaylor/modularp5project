@@ -10,10 +10,8 @@ export default class Package {
 
   constructor (modules: Module[] = [], options?: {x?: number, y?: number}) {
     this.id = uuid();
-    this.modules = modules.reduce((acc, mod) => {
-      acc[mod.name] = mod;
-      return acc;
-    }, ({} as any));
+    this.modules = {};
+    this.add(modules);
 
     //load init options
     if(options)
@@ -22,8 +20,11 @@ export default class Package {
         .forEach((option: keyof typeof options) => this[option] = options[option])
   }
 
-  add (mod: Module) {
-    this.modules[mod.name] = mod;
+  add (mod?: Module | Module[]) {
+    if (mod) {
+      if (!Array.isArray(mod)) mod = [mod];
+      mod.forEach(mod => this.modules[mod.name] = mod);
+    }
     return this;
   }
 

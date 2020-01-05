@@ -12,6 +12,7 @@ export default class Mouse extends Module {
 
   constructor (sketch: p5) {
     super(sketch);
+    this.sketch = sketch;
     this.update(null);
   }
 
