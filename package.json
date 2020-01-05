@@ -9,7 +9,7 @@
     "start-run": "browser-sync start --server -w",
     "start": "webpack-dev-server -d",
     "build": "webpack --config webpack.config.js --mode production",
-    "deploy": "gh-pages -d dist",
+    "deploy": "npm run build && gh-pages -d dist",
     "check-types": "tsc"
   },
   "homepage": "https://github.com/Gaweph/p5-typescript-starter#readme",
