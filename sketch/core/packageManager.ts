@@ -23,4 +23,11 @@ export default class PackageManager {
       .forEach(key => this.packages[key].update())
     return this;
   }
+
+  draw () {
+    Object
+      .keys(this.packages)
+      .forEach(key => this.packages[key].draw())
+    return this;
+  }
 }

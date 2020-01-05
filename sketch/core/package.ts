@@ -44,4 +44,8 @@ export default class Package {
         this.modules[key].update(this)
       })
   }
+
+  draw () {
+    //For children to implement
+  }
 }
