@@ -12,8 +12,8 @@ export default class PackageManager {
     return this;
   }
 
-  remove (id: string | number) {
-    delete this.packages[id];
+  remove (pack: Package) {
+    delete this.packages[pack.id];
     return this;
   }
 

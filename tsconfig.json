@@ -7,14 +7,12 @@
         "removeComments": true,
         "preserveConstEnums": true,
         //"outFile": "./build/build.js",
-        "sourceRoot": "./sketch/*",
-        "rootDir": "./sketch/",
+        //"sourceRoot": "./sketch/*",
         "sourceMap": true,
-        "noImplicitAny": true,
-        "module": "commonjs",
+        //"module": "commonjs",
         "esModuleInterop": true
     },
 	"include": [
-		"sketch", "sketch/webpack.config.js"
+		"sketch", "webpack.config.js"
 	]
 }

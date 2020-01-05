@@ -11,7 +11,7 @@ function sketch (p: p5) {
         p.rectMode(p.CENTER);
         //colors = ColorHelper.getColorsArray(squares);
         packageManager = new PackageManager()
-            .add(new Package("dot", [new Shape(p, 'ellipse', 100, 100)], {x: 100, y: 200}))
+            .add(new Package([new Shape(p, 'ellipse', 100, 100)], {x: 100, y: 200}))
     }
 
     p.draw = function draw() {

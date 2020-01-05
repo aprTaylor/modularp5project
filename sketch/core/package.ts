@@ -1,14 +1,15 @@
 import Module from "./module";
+import uuid from "uuid/v4"
 
 
 export default class Package {
   modules: Record<string, Module>;
-  id: string;
+  readonly id: string;
   x = 0;
   y = 0;
 
-  constructor (id: string, modules: Module[] = [], options?: {x?: number, y?: number}) {
-    this.id = id;
+  constructor (modules: Module[] = [], options?: {x?: number, y?: number}) {
+    this.id = uuid();
     this.modules = modules.reduce((acc, mod) => {
       acc[mod.name] = mod;
       return acc;
