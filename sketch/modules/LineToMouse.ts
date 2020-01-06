@@ -14,10 +14,9 @@ export default class LineToMouse extends Module {
   }
 
   update (pack: Package) {
-    const mods = pack.modules;
+    const {line, mouse} = pack.getMods();
 
-    if(mods.line instanceof Line && mods.mouse instanceof Mouse) {
-      const {line, mouse} = mods;
+    if(line instanceof Line && mouse instanceof Mouse) {
       //const mouseVec = this.sketch.createVector(mouse.x, mouse.y);
       //const centerVec = this.sketch.createVector(line.x1/2, line.y1/2);
 

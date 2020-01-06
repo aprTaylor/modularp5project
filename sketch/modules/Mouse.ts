@@ -1,11 +1,11 @@
 import Module from "../core/module";
 import Package from "../core/package"
 import p5 from "p5"
+import Vector from "./Utility/Vector";
 
 
-export default class Mouse extends Module {
+export default class Mouse extends Vector {
   name = "mouse"
-  shape: string;
   sketch: p5;
   x: number;
   y: number;

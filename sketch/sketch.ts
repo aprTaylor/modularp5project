@@ -4,6 +4,7 @@ import Package from "./core/package";
 import Line from "./modules/Line";
 import Mouse from "./modules/Mouse";
 import LineToMouse from "./modules/LineToMouse";
+import Mover from "./creators/mover";
 
 let packageManager: PackageManager;
 
@@ -13,12 +14,7 @@ function sketch (p: p5) {
         p.rectMode(p.CENTER);
         //colors = ColorHelper.getColorsArray(squares);
         packageManager = new PackageManager()
-            .add(new Package([
-                new Line(p, 10, 50, 100, 100), 
-                new Mouse(p),
-                new LineToMouse(p)
-            ]))    
-        //.add(new Package([new Shape(p, 'ellipse', 100, 100)], {x: 100, y: 200}))
+            .add(Mover(p))
     }
 
     p.draw = function draw() {

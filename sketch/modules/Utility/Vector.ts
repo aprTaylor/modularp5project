@@ -4,7 +4,7 @@ import { IsVector } from "../../core/interface";
 
 p5.Vector
 
-export default class Vector extends Module implements IsVector {
+export default class Vector extends Module {
   name = "vector"
   x: number
   y: number
@@ -27,10 +27,37 @@ export default class Vector extends Module implements IsVector {
       x = x.x;
     }  
 
-    this.x += x;
-    this.y += y;
+    this.fromVector(this.toVector().add(x, y));
+
     return this;
   }
+
+  /* Subtract another 2D vector  */
+  sub(obj: {x: number, y: number}, y?: number): this 
+  sub(x: number, y: number): this
+  sub(x: number | any, y?: number): this {
+    if(typeof x != "number") {
+      y = x.y;
+      x = x.x;
+    }  
+
+    this.fromVector(this.toVector().sub(x, y));
+
+    return this;
+  }
+
+  /* Set vector from p5 vector. Will limit if limit is set.*/
+  fromVector (vec: p5.Vector) {
+    const fromVec = vec.copy();
+
+    if (this.limit) fromVec.limit(this.limit);
+    this.x = fromVec.x;
+    this.y = fromVec.y;
+
+    return this;
+  }
+
+
 
   /** Cast to a vector. Auto limits vector if limit is specified */
   toVector () {

@@ -4,7 +4,6 @@ import Package from "./package";
 export default class Module {
   name = "base"
   readonly sketch: p5;
-  hello: string;
 
   constructor(sketch: p5) {
     this.sketch = sketch;

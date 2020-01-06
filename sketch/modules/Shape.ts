@@ -2,6 +2,7 @@ import Module from "../core/module";
 import Package from "../core/package"
 import p5 from "p5"
 import { Draw } from "../core/interface";
+import Location from "./Location";
 
 
 export default class Shape extends Module implements Draw{
@@ -18,7 +19,12 @@ export default class Shape extends Module implements Draw{
   }
 
   draw (pack?: Package) {
-    this.sketch.ellipse(pack?.x || 0, pack?.y || 0, this.width, this.height);
+    const {location} = pack.getMods();
+
+
+    if (location instanceof Location){
+      this.sketch.ellipse(location.x, location.y, this.width, this.height);
+    }
   }
 
   update (pack: Package) {

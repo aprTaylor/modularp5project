@@ -3,14 +3,12 @@ import uuid from "uuid/v4"
 
 
 export default class Package {
-  modules: Record<string, Module>;
+  modules: Map<string, Module>;
   readonly id: string;
-  x = 0;
-  y = 0;
 
-  constructor (modules: Module[] = [], options?: {x?: number, y?: number}) {
+  constructor (modules: Module[] = [], options?: {}) {
     this.id = uuid();
-    this.modules = {};
+    this.modules = new Map();
     this.add(modules);
 
     //load init options
@@ -23,7 +21,7 @@ export default class Package {
   add (mod?: Module | Module[]) {
     if (mod) {
       if (!Array.isArray(mod)) mod = [mod];
-      mod.forEach(mod => this.modules[mod.name] = mod);
+      mod.forEach((mod) => this.modules.set(mod.name, mod));
     }
     return this;
   }
@@ -34,16 +32,22 @@ export default class Package {
   }
 
   get (name: string) {
-    return this.modules[name];
+    return this.modules.get(name);
   }
 
   update () {
-    Object
-      .keys(this.modules)
-      .forEach(key => {
-        this.modules[key].update(this)
+    this.modules
+      .forEach((mod, key) => {
+        this.modules.get(key).update(this)
       })
   }
+
+  getMods () {
+    const obj: Record<string, Module> = {};
+    this.modules.forEach ((v,k) => { obj[k] = v });
+    return obj;
+  }
+  
 
   draw () {
     //For children to implement
