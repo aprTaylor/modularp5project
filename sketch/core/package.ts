@@ -22,12 +22,15 @@ export default class Package {
     if (mod) {
       if (!Array.isArray(mod)) mod = [mod];
       mod.forEach((mod) => this.modules.set(mod.name, mod));
+
+      //Init new modules
+      mod.forEach(mod => mod.init(this));
     }
     return this;
   }
 
   remove (name: string) {
-    delete this.modules[name];
+    this.modules.delete(name);
     return this;
   }
 
@@ -36,16 +39,23 @@ export default class Package {
   }
 
   update () {
-    this.modules
-      .forEach((mod, key) => {
-        this.modules.get(key).update(this)
-      })
+    onEach(this.modules, mod => mod.update(this))
   }
 
-  getMods () {
-    const obj: Record<string, Module> = {};
-    this.modules.forEach ((v,k) => { obj[k] = v });
+  /** Returns modules as object */
+  getMods (): Record<string, Module> {
+    const obj = {};
+    for (let [key, value] of this.modules) {
+      obj[key] = value;
+    }
     return obj;
+  }
+
+   /////////////////////////////////////////////////////////////////
+  //// INTERACTION ////////////////////////////////////////////////
+ /////////////////////////////////////////////////////////////////
+  mousePressed () {
+    onEach(this.modules, mod => mod.mousePressed())
   }
   
 
@@ -53,3 +63,10 @@ export default class Package {
     //For children to implement
   }
 }
+
+function onEach<K, V> (map: Map<K, V>, fn: (item: V) => void) {
+  map
+    .forEach((mod, key) => {
+      fn(mod);
+    })
+} 

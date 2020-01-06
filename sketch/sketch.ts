@@ -17,13 +17,19 @@ function sketch (p: p5) {
             .add(Mover(p))
     }
 
-    p.draw = function draw() {
+    p.draw = function () {
 
         p.background(255);
     
         packageManager.update();
         packageManager.draw();
-    }    
+    }
+    
+
+
+    p.mousePressed = function () {
+        packageManager.mousePressed();
+    }
 }
 
-new p5(sketch)
+new p5(sketch);

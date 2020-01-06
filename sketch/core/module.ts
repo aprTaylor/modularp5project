@@ -9,6 +9,10 @@ export default class Module {
     this.sketch = sketch;
   }
 
+  init(pack: Package) {
+    //Init
+  }
+
   update (pack: Package) {
     //Update
   }

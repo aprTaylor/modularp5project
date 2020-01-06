@@ -26,7 +26,8 @@ export default class MoveToMouse extends Module {
       const locVec = location.toVector();
       const dir = Vector
         .sub(mouseVector(this.sketch), locVec)
-        .normalize();
+        .normalize()
+        .mult(0.5);
 
       acceleration.fromVector(dir);
       velocity.add(acceleration);

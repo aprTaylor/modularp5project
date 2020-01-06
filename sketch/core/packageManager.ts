@@ -1,4 +1,5 @@
 import Package from "./package";
+import { onEach } from "../utils";
 
 export default class PackageManager {
   packages!: Record<string, Package>;
@@ -18,16 +19,17 @@ export default class PackageManager {
   }
 
   update () {
-    Object
-      .keys(this.packages)
-      .forEach(key => this.packages[key].update())
+    onEach(this.packages, key => this.packages[key].update())
     return this;
   }
 
   draw () {
-    Object
-      .keys(this.packages)
-      .forEach(key => this.packages[key].draw())
+    onEach(this.packages, key => this.packages[key].draw())
+    return this;
+  }
+
+  mousePressed () {
+    onEach(this.packages, key => this.packages[key].mousePressed())
     return this;
   }
 }

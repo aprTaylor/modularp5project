@@ -8,6 +8,8 @@ import Shape from "../modules/Shape";
 import MoveToMouse from "../modules/Physics/MoveToMouse";
 import Mouse from "../modules/Mouse";
 import BoundToView from "../modules/View/BoundToView";
+import Force from "../modules/Physics/Force";
+import WindOnClick from "../modules/Sim/WindOnClick";
 
 export type OptionProps = {
   velocity?: [number, number, number?], 
@@ -21,5 +23,7 @@ export default function Mover (sketch: p5, options?: OptionProps) {
     new MoveToMouse(sketch),
     new BoundToView(sketch),
     new Shape(sketch, "ellipse", 16, 16),
+    new WindOnClick(sketch),
+    new Force(sketch)
   ])
 }
