@@ -3,7 +3,9 @@
   "version": "1.0.0",
   "description": "Project to quickly get something working in [p5.js](https://p5js.org/) and [typescript](https://www.typescriptlang.org/)",
   "scripts": {
-    "test": "mocha test/**/*.ts --watch --reporter mochawesome ",
+    "browser": "browser-sync mochawesome-report --index mochawesome.html  -w",
+    "mocha": "mocha test/**/*.ts --watch --reporter mochawesome",
+    "test": "concurrently \"npm run mocha\" \"npm run browser\"",
     "start-old": "run-p start-compile start-run",
     "start-compile": "tsc --watch",
     "start-run": "browser-sync start --server -w",
@@ -33,6 +35,7 @@
     "browser-sync": "^2.26.7",
     "browserify": "^16.5.0",
     "chai": "^4.2.0",
+    "concurrently": "^5.0.2",
     "gh-pages": "^2.1.1",
     "istanbul": "^0.4.5",
     "mocha": "^7.0.0",
