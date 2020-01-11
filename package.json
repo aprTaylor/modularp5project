@@ -11,6 +11,7 @@
     "start-run": "browser-sync start --server -w",
     "start": "webpack-dev-server -d",
     "build": "webpack --config webpack.config.js --mode production",
+    
     "deploy": "npm run build && gh-pages -d dist",
     "check-types": "tsc",
     "compile": "babel src -d lib --extensions '.ts,.tsx'"
@@ -49,6 +50,7 @@
   },
   "dependencies": {
     "@babel/register": "^7.7.7",
+    "@types/chai": "^4.2.7",
     "@types/mocha": "^5.2.7",
     "@types/ramda": "^0.26.39",
     "p5": "^0.10.2",

@@ -1,30 +1,36 @@
 import { without } from 'ramda'
 
-export class oneWayNode<T> {
-  to: twoWayNode<T>[];
+export class OneWayNode<T> {
+  to: TwoWayNode<T>[];
 
-  add (node: twoWayNode<T>) {
+  constructor () {
+    this.to = [];
+  } 
+
+  add (node: TwoWayNode<T>) {
     this.to.push(node);
     return this;
   }
 
-  remove (node: twoWayNode<T>) {
+  remove (node: TwoWayNode<T>) {
    this.to = without([node], this.to);
    return this;
   }
 }
 
 type Level = "top" | "bottom"
-export class twoWayNode<T> {
+export class TwoWayNode<T> {
   element: T
-  top: oneWayNode<T>[]
-  bottom: oneWayNode<T>[]
+  top: OneWayNode<T>[]
+  bottom: OneWayNode<T>[]
 
   constructor (item: T) {
     this.element = item;
+    this.top = [];
+    this.bottom = [];
   }
 
-  add(end: Level, node: oneWayNode<T>) {
+  add(end: Level, node: OneWayNode<T>) {
     switch(end){
       case "top": this.top.push(node); break;
       case "bottom": this.bottom.push(node); break;
@@ -33,7 +39,7 @@ export class twoWayNode<T> {
     return this;
   }
 
-  remove(end: Level, node: oneWayNode<T>) {
+  remove(end: Level, node: OneWayNode<T>) {
     switch(end){
       case "top": this.top = without([node], this.top); break;
       case "bottom": this.bottom = without([node], this.bottom); break;
@@ -70,24 +76,24 @@ type getElementOptions = {level: Level, key: string};
  * Adding, and finding are quick. Removing is slow. 
  */
 export default class Graph<T> {
-  top: Record<string, oneWayNode<T>>
-  bottom: Record<string, oneWayNode<T>>
+  top: Record<string, OneWayNode<T>>
+  bottom: Record<string, OneWayNode<T>>
 
   constructor () {
     this.top = {};
     this.bottom = {};
   }
 
-  private validateKey (key: string, obj: Record<string, oneWayNode<T>>, suppressWarn = false) {
+  private validateKey (key: string, obj: Record<string, OneWayNode<T>>, suppressWarn = false) {
     if (obj[key]) {
-      !suppressWarn && console.warn(key, "is already present in graph. Overriding key...");
+      !suppressWarn && console.warn(key, "is already present in graph.");
       return false;
     }
 
     return true;
   }
 
-  private validateElement (key: string, obj: Record<string, oneWayNode<T>>, suppressWarn = false) {
+  private validateElement (key: string, obj: Record<string, OneWayNode<T>>, suppressWarn = false) {
     if (!obj[key]) {
       !suppressWarn && console.warn(key, "is not present in graph. Cannot add to graph.");
       return false;
@@ -98,31 +104,41 @@ export default class Graph<T> {
 
 
   addTop (key: string, suppressWarn = false) {
-    this.validateKey(key, this.top, suppressWarn);
-    this.top[key] = new oneWayNode<T>();
-
+    if(this.validateKey(key, this.top, suppressWarn)) {
+      this.top[key] = new OneWayNode<T>();
+    }
+    
     return this;
   }
 
   addBottom (key: string, suppressWarn = false) {
-    this.validateKey(key, this.bottom, suppressWarn);
-    this.bottom[key] = new oneWayNode<T>();
+    if(this.validateKey(key, this.bottom, suppressWarn)) {
+      this.bottom[key] = new OneWayNode<T>();
+    }
 
     return this;
   }
 
-  addElementTop (key: string, element: T) {
-    if (this.validateElement(key, this.top)) {
-      this.top[key].add(new twoWayNode<T>(element));
+  // unbiased adding to graph
+  private addElementToGraph (level: Level, key: string, element: T) {
+    if(this.validateElement(key, this[level])) {
+      const node = new TwoWayNode<T>(element);
+      //Add node to given record
+      this[level][key].add(node);
+
+      //wire node to level
+      node.add(level, this[level][key]);
     }
+  }
+
+  addElementTop (key: string, element: T) {
+    this.addElementToGraph('top', key, element);
 
     return this;
   }
 
   addElementBottom (key: string, element: T) {
-    if (this.validateElement(key, this.bottom)) {
-      this.bottom[key].add(new twoWayNode<T>(element));
-    }
+    this.addElementToGraph('bottom', key, element);
 
     return this;
   }
