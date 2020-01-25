@@ -1,4 +1,5 @@
-import { without } from 'ramda'
+import { without, map, prop, flatten, compose } from 'ramda'
+import { forceArray } from '../list';
 
 export class OneWayNode<T> {
   to: TwoWayNode<T>[];
@@ -21,13 +22,17 @@ export class OneWayNode<T> {
 type Level = "top" | "bottom"
 export class TwoWayNode<T> {
   element: T
-  top: OneWayNode<T>[]
-  bottom: OneWayNode<T>[]
+  top: OneWayNode<T>[];
+  bottom: OneWayNode<T>[];
+  next: TwoWayNode<T> | null;
+  prev: TwoWayNode<T> | null;
 
   constructor (item: T) {
     this.element = item;
     this.top = [];
     this.bottom = [];
+    this.next = null;
+    this.prev = null;
   }
 
   add(end: Level, node: OneWayNode<T>) {
@@ -60,13 +65,15 @@ export class TwoWayNode<T> {
     this.element = null;
     this.bottom = null;
     this.top = null;
+    this.next = null;
+    this.prev = null;
   }
 
 
 }
 
 
-type addElementOptions<T> = {level: Level, key: string, element: T};
+type addElementOptions<T> = {top?: string | string[], bottom?: string | string[], element: T};
 type getElementOptions = {level: Level, key: string};
 /**
  * A double entry graph. Two maps are specified, a top and a bottom.
@@ -74,14 +81,21 @@ type getElementOptions = {level: Level, key: string};
  * 
  * This provides us a quick way to access objects from different contexts.
  * Adding, and finding are quick. Removing is slow. 
+ * 
+ * Elements in a graph are iterable.
+ * Insertion order will be kept.
  */
 export default class Graph<T> {
-  top: Record<string, OneWayNode<T>>
-  bottom: Record<string, OneWayNode<T>>
+  top: Record<string, OneWayNode<T>>;
+  bottom: Record<string, OneWayNode<T>>;
+  head: null | TwoWayNode<T>;
+  tail: null | TwoWayNode<T>;
 
   constructor () {
     this.top = {};
     this.bottom = {};
+    this.head = null;
+    this.tail = null;
   }
 
   private validateKey (key: string, obj: Record<string, OneWayNode<T>>, suppressWarn = false) {
@@ -120,42 +134,60 @@ export default class Graph<T> {
   }
 
   // unbiased adding to graph
-  private addElementToGraph (level: Level, key: string, element: T) {
+  private addElementToGraph (level: Level, key: string, element: T | T[]) {
     if(this.validateElement(key, this[level])) {
-      const node = new TwoWayNode<T>(element);
-      //Add node to given record
-      this[level][key].add(node);
+      const elements = forceArray(element);
 
-      //wire node to level
-      node.add(level, this[level][key]);
+      elements.forEach(element => {
+        let node = this.find(element);
+        
+        //Set up node if it does not exist
+        if (!node) {
+          node = new TwoWayNode<T>(element);
+
+          //Chain node
+          node.prev = this.tail;
+          if(this.tail) this.tail.next = node;
+
+          if(!this.head) this.head = node;
+          this.tail = node;
+        }
+
+        //Add node to given record
+        this[level][key].add(node);
+        
+        //wire node to level
+        node.add(level, this[level][key]);
+      });
     }
   }
 
-  addElementTop (key: string, element: T) {
+  private find(obj: T, next = this.head): null | TwoWayNode<T> {
+    if(!next) return null;
+    else if (next.element === obj) return next;
+    else if (this.tail.element === obj) return this.tail;
+    else return this.find(obj, next.next);
+  }
+
+  addElementTop (key: string, element: T | T[]){
     this.addElementToGraph('top', key, element);
 
     return this;
   }
 
-  addElementBottom (key: string, element: T) {
+  addElementBottom (key: string, element: T | T[]) {
     this.addElementToGraph('bottom', key, element);
 
     return this;
   }
 
   add (options: addElementOptions<T>) {
-    const {level, key, element} = options;
-    if(!this.validateKey(key, this[level], true)) {
-      switch (level) {
-        case "top": this.addTop(key, true); break;
-        case "bottom": this.addBottom(key, true); break;
-      }
-    }
-    
-    switch (level) {
-      case "top": this.addElementTop(key, element); break;
-      case "bottom": this.addElementBottom(key, element); break; 
-    }
+    const {top, bottom, element} = options;
+    const tops = forceArray(top);
+    const bottoms = forceArray(bottom);
+
+    tops.forEach(key => key && this.addTop(key, true).addElementTop(key, element));
+    bottoms.forEach(key => key && this.addBottom(key, true).addElementBottom(key, element));
 
     return this; 
   }
@@ -174,17 +206,41 @@ export default class Graph<T> {
     return this.bottom[key].to.map(node => node.element);
   }
 
+  getSiblings (options: getElementOptions) {
+    const {level, key} = options;
+    const otherLevel = level=="top"?"bottom":"top";
+
+    return this[level][key].to.map(node => ({
+        data: node.element, 
+        siblings: compose(map(prop("element")), flatten, map(prop("to")))(node[otherLevel])
+      })
+    );
+  }
+
+
   get (options: getElementOptions) {
     const {level, key} = options;
 
     switch (level) {
-      case "top": return this.getTop(level);
-      case "bottom": return this.getBottom(level);
+      case "top": return this.getTop(key);
+      case "bottom": return this.getBottom(key);
     }
   }
 
   getAll (options: getElementOptions[]) {
     return options.map(option => this.get(option));
+  }
+
+  [Symbol.iterator]() { 
+    let next = this.head;
+    return {
+      next () {
+        const value = next?.element;
+        next = next?.next;
+
+        return {done: !!next, value};
+      }
+    }
   }
 }
 

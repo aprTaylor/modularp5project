@@ -121,7 +121,7 @@ describe('graph', () => {
     })
   })
 
-  describe('#addElementTop', () => [
+  describe('#addElementTop', () => {
     it('should add element as TwoWayNode to key in top', () => {
       const graph = new Graph<string>();
       graph.addTop(key);
@@ -131,7 +131,19 @@ describe('graph', () => {
 
       expect(oneWayNode.to).to.deep.equal([twoWayNode])
     })
-  ])
+  })
+
+  describe('#addElementBottom', () => {
+    it('should add element as TwoWayNode to key in top', () => {
+      const graph = new Graph<string>();
+      graph.addBottom(key);
+
+      const oneWayNode = graph.addElementBottom(key, element).top[key];
+      const twoWayNode = new TwoWayNode(element).add('bottom', oneWayNode);
+
+      expect(oneWayNode.to).to.deep.equal([twoWayNode])
+    })
+  })
 })
 
 export {};
