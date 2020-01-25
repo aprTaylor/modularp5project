@@ -1,12 +1,9 @@
 import uuid from "uuid/v4";
 import Package from "./package";
 import { onEach } from "../utils";
-<<<<<<< Updated upstream
-=======
 import Graph from "../utils/structures/Graph";
 import Module from "./module";
 import { forceArray } from "../utils/list";
->>>>>>> Stashed changes
 
 export type System = (pm: PackageManager) => void
 export default class PackageManager {
@@ -32,20 +29,6 @@ export default class PackageManager {
     return this.map.getTop(id);
   }
 
-<<<<<<< Updated upstream
-  update () {
-    onEach(this.packages, key => this.packages[key].update())
-    return this;
-  }
-
-  draw () {
-    onEach(this.packages, key => this.packages[key].draw())
-    return this;
-  }
-
-  mousePressed () {
-    onEach(this.packages, key => this.packages[key].mousePressed())
-=======
   //TODO: ALLOW MODIFICATION OF ALL MODULES IN A PACKAGE (GET SIBLINGS)
   getByMod (names: string | string[]) {
     const mods = forceArray(names);
@@ -64,7 +47,6 @@ export default class PackageManager {
   remove (id) {
     //TODO
     //this.map.remove
->>>>>>> Stashed changes
     return this;
   }
 
