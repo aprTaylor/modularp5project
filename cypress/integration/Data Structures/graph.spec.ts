@@ -147,6 +147,30 @@ describe('graph', () => {
     })
   })
 
+  describe('#getSiblings', () => {
+    it('should return all sibling nodes', () => {
+      const graph = new Graph<string>();
+      const top1 = "top1";
+      const top2 = "top2";
+      const elements = ["one", "two", "three"]
+
+      graph.addAll([
+        {top: top1, element: elements[0]},
+        {top: top2, element: elements[2]},
+        {top: top1, element: elements[1]},
+      ]);
+
+      expect(graph.getSiblings(elements[0], "bottom")[0].siblings)
+        .to
+        .have
+        .members(elements.slice(0, 2))
+        .and
+        .to
+        .not
+        .include(elements[2])
+    })
+  })
+
   describe('generally', () => {
     it('should not re-add an element already in the graph', () => {
       const graph = new Graph<string>();

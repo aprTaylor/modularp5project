@@ -1,4 +1,4 @@
-import { without, map, prop, flatten, compose, call } from 'ramda'
+import { without, map, prop, flatten, compose, call, T } from 'ramda'
 import { forceArray } from '../list';
 import { capitalize } from '../string';
 
@@ -76,8 +76,8 @@ export class TwoWayNode<T> {
 }
 
 
-type addElementOptions<T> = {top?: string | string[], bottom?: string | string[], element: T};
-type getElementOptions = {level: Level, key: string};
+export type addElementOptions<T> = {top?: string | string[], bottom?: string | string[], element: T};
+export type getElementOptions = {level: Level, key: string};
 /**
  * A double entry graph. Two maps are specified, a top and a bottom.
  * Each element in both maps are Nodes.
@@ -209,22 +209,23 @@ export default class Graph<T> {
     return this.bottom[key].to.map(node => node.element);
   }
 
-  getSiblings (options: getElementOptions) {
-    const {level, key} = options;
-    const otherLevel = level=="top"?"bottom":"top";
+  getSiblings(options: getElementOptions)
+  getSiblings(options: T, levelRef: Level)
+  getSiblings (options: getElementOptions | T, levelRef?: Level): {data: T, siblings: T[]}[] {
+    const level =  isGetElementOptions(options) ? options.level : levelRef ;
+    const node = isGetElementOptions(options) ? this[level][options.key].to : [this.find(options)];
+    const otherLevel = level =="top"?"bottom":"top";
 
-    return this[level][key].to.map(node => ({
+    return node.map(node => ({
         data: node.element, 
-        siblings: compose(map(prop("element")), flatten, map(prop("to")))(node[otherLevel])
+        siblings:compose(map(prop("element")), flatten, map(prop("to")))(node[otherLevel])
       })
     );
   }
 
 
   /** Return elements according to options */
-  get (options: getElementOptions ): T
-  get (options: getElementOptions[]): T[]
-  get (options: getElementOptions | getElementOptions[]): T | T[] {
+  get (options: getElementOptions | getElementOptions[]): T[] {
     if(!Array.isArray(options)){
       const {level, key} = options;
 
@@ -261,3 +262,6 @@ export default class Graph<T> {
   }
 }
 
+function isGetElementOptions (obj: any): obj is getElementOptions {
+  return (obj.level === "top" || obj.level === "bottom") && typeof obj.key === "string"
+}

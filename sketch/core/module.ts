@@ -3,6 +3,7 @@ import Package from "./package";
 
 export default class Module {
   name = "base"
+  siblings?: Module[]
   readonly sketch: p5;
 
   constructor(sketch: p5) {

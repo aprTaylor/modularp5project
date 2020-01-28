@@ -1,7 +1,7 @@
 import uuid from "uuid/v4";
 import Package from "./package";
 import { onEach } from "../utils";
-import Graph from "../utils/structures/Graph";
+import Graph, { getElementOptions } from "../utils/structures/Graph";
 import Module from "./module";
 import { forceArray } from "../utils/list";
 
@@ -24,9 +24,11 @@ export default class PackageManager {
     return this;
   }
 
-  /** Get modules by package id */
-  get (id: string) {
-    return this.map.getTop(id);
+  /** Get modules by package id or get siblings of a mod */
+  get (id: string | Module) {
+    if (typeof id === 'string') return this.map.getTop(id);
+
+    return this.map.getSiblings(id, 'bottom');
   }
 
   //TODO: ALLOW MODIFICATION OF ALL MODULES IN A PACKAGE (GET SIBLINGS)
@@ -35,14 +37,17 @@ export default class PackageManager {
     const uMods = new Set<Module>();
 
     mods.forEach(name => {
+      const query:getElementOptions = {level: "bottom", key: name};
       this
         .map
-        .getBottom(name)
+        .get(query)
         .forEach(mod => uMods.add(mod))
     });
 
     return Array.from(uMods);
   }
+
+
 
   remove (id) {
     //TODO
