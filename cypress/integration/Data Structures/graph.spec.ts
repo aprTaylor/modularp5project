@@ -160,7 +160,7 @@ describe('graph', () => {
         {top: top1, element: elements[1]},
       ]);
 
-      expect(graph.getSiblings(elements[0], "bottom")[0].siblings)
+      expect(graph.getSiblings(elements[0], "bottom"))
         .to
         .have
         .members(elements.slice(0, 2))

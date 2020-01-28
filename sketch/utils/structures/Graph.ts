@@ -209,18 +209,26 @@ export default class Graph<T> {
     return this.bottom[key].to.map(node => node.element);
   }
 
-  getSiblings(options: getElementOptions)
-  getSiblings(options: T, levelRef: Level)
-  getSiblings (options: getElementOptions | T, levelRef?: Level): {data: T, siblings: T[]}[] {
+  /** Get siblings of node(s) */
+  getSiblings(options: getElementOptions): {data: T, siblings: T[]}[]
+  getSiblings(options: T, levelRef: Level): T[]
+  getSiblings (options: getElementOptions | T, levelRef?: Level): {data: T, siblings: T[]}[] | T[] {
     const level =  isGetElementOptions(options) ? options.level : levelRef ;
     const node = isGetElementOptions(options) ? this[level][options.key].to : [this.find(options)];
     const otherLevel = level =="top"?"bottom":"top";
+    const get = (node) : T[] => compose(
+        map(prop("element")), 
+        flatten, map(prop("to"))
+      )
+      (node[otherLevel])
 
-    return node.map(node => ({
+    return isGetElementOptions(options)?
+     node.map(node => ({
         data: node.element, 
-        siblings:compose(map(prop("element")), flatten, map(prop("to")))(node[otherLevel])
+        siblings: get(node)
       })
-    );
+    ) :
+    get(node[0]);
   }
 
 
