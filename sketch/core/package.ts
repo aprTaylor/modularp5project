@@ -55,7 +55,7 @@ export default class Package {
   //// INTERACTION ////////////////////////////////////////////////
  /////////////////////////////////////////////////////////////////
   mousePressed () {
-    onEach(this.modules, mod => mod.mousePressed())
+    //onEach(this.modules, mod => mod.mousePressed())
   }
   
 

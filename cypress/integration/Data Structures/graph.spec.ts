@@ -1,6 +1,10 @@
-import { expect } from 'chai'
-import Graph, { OneWayNode, TwoWayNode } from "../sketch/utils/structures/Graph"
+/// <reference types="cypress" />
+import chai, { expect } from 'chai';
+import chaiIterator  from "chai-iterator";
+import Graph, { OneWayNode, TwoWayNode } from "../../../sketch/utils/structures/Graph"
 
+// Set up chai
+chai.use(chaiIterator);
 
 const element = "one";
 
@@ -154,7 +158,13 @@ describe('graph', () => {
       const oneWayNodeBottom = graph.addElementBottom(key2, element).bottom[key2];
 
       expect(oneWayNodeTop).to.equal(oneWayNodeBottom);
-    }) 
+    })
+    
+    it('should be iterable', () => {
+      const graph = new Graph<string>();
+
+      expect(graph).to.be.iterable;
+    })
   })
 })
 

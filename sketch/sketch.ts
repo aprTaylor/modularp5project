@@ -1,3 +1,5 @@
+//TODO: REMOVE
+//@ts-nocheck
 import p5 from "p5"
 import PackageManager from "./core/packageManager";
 import Package from "./core/package";
