@@ -1,10 +1,7 @@
 /// <reference types="cypress" />
-import chai, { expect } from 'chai';
-import chaiIterator  from "chai-iterator";
+import { expect } from 'chai';
 import Graph, { OneWayNode, TwoWayNode } from "../../../sketch/utils/structures/Graph"
 
-// Set up chai
-chai.use(chaiIterator);
 
 const element = "one";
 
@@ -142,9 +139,8 @@ describe('graph', () => {
   describe('#addElementBottom', () => {
     it('should add element as TwoWayNode to key in top', () => {
       const graph = new Graph<string>();
-      graph.addBottom(key);
 
-      const oneWayNode = graph.addElementBottom(key, element).top[key];
+      const oneWayNode = graph.addElementBottom(key, element).bottom[key];
       const twoWayNode = new TwoWayNode(element).add('bottom', oneWayNode);
 
       expect(oneWayNode.to).to.deep.equal([twoWayNode])
@@ -157,14 +153,33 @@ describe('graph', () => {
       const oneWayNodeTop = graph.addElementTop(key, element).top[key];
       const oneWayNodeBottom = graph.addElementBottom(key2, element).bottom[key2];
 
-      expect(oneWayNodeTop).to.equal(oneWayNodeBottom);
+      expect(oneWayNodeTop.to[0]).to.equal(oneWayNodeBottom.to[0]);
     })
-    
-    it('should be iterable', () => {
-      const graph = new Graph<string>();
 
-      expect(graph).to.be.iterable;
+    it('should iterate in insertion order', () => {
+      const graph = new Graph<string>();
+      const elements = ["one", "two", "three", "four"];
+
+      graph.addAll(elements.map((element, index) => ({
+        top: index%2==0 && element,
+        bottom: index%2!=0 && element,
+        element
+      })))
+      
+
+      let i = 0;
+      let matches = true;
+      for(const element of graph) {
+        if(element !== elements[i]) {
+          matches = false;
+          break;
+        }
+        i++;
+      }
+
+      expect(matches).to.be.true;
     })
+  
   })
 })
 

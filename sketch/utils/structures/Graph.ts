@@ -1,5 +1,6 @@
-import { without, map, prop, flatten, compose } from 'ramda'
+import { without, map, prop, flatten, compose, call } from 'ramda'
 import { forceArray } from '../list';
+import { capitalize } from '../string';
 
 export class OneWayNode<T> {
   to: TwoWayNode<T>[];
@@ -18,6 +19,8 @@ export class OneWayNode<T> {
    return this;
   }
 }
+
+export type Callback<T, E> = (currentValue: T, index: number, type: E) => void
 
 type Level = "top" | "bottom"
 export class TwoWayNode<T> {
@@ -109,7 +112,7 @@ export default class Graph<T> {
 
   private validateElement (key: string, obj: Record<string, OneWayNode<T>>, suppressWarn = false) {
     if (!obj[key]) {
-      !suppressWarn && console.warn(key, "is not present in graph. Cannot add to graph.");
+      !suppressWarn && console.warn(key, "is not present in graph.");
       return false;
     }
 
@@ -135,31 +138,31 @@ export default class Graph<T> {
 
   // unbiased adding to graph
   private addElementToGraph (level: Level, key: string, element: T | T[]) {
-    if(this.validateElement(key, this[level])) {
-      const elements = forceArray(element);
+    if(!this.validateElement(key, this[level]))
+      this[`add${capitalize(level)}`](key);
 
-      elements.forEach(element => {
-        let node = this.find(element);
-        
-        //Set up node if it does not exist
-        if (!node) {
-          node = new TwoWayNode<T>(element);
+    const elements = forceArray(element);
+    elements.forEach(element => {
+      let node = this.find(element);
+      
+      //Set up node if it does not exist
+      if (!node) {
+        node = new TwoWayNode<T>(element);
 
-          //Chain node
-          node.prev = this.tail;
-          if(this.tail) this.tail.next = node;
+        //Chain node
+        node.prev = this.tail;
+        if(this.tail) this.tail.next = node;
 
-          if(!this.head) this.head = node;
-          this.tail = node;
-        }
+        if(!this.head) this.head = node;
+        this.tail = node;
+      }
 
-        //Add node to given record
-        this[level][key].add(node);
-        
-        //wire node to level
-        node.add(level, this[level][key]);
-      });
-    }
+      //Add node to given record
+      this[level][key].add(node);
+      
+      //wire node to level
+      node.add(level, this[level][key]);
+    });
   }
 
   private find(obj: T, next = this.head): null | TwoWayNode<T> {
@@ -218,18 +221,32 @@ export default class Graph<T> {
   }
 
 
-  get (options: getElementOptions) {
-    const {level, key} = options;
+  /** Return elements according to options */
+  get (options: getElementOptions ): T
+  get (options: getElementOptions[]): T[]
+  get (options: getElementOptions | getElementOptions[]): T | T[] {
+    if(!Array.isArray(options)){
+      const {level, key} = options;
 
-    switch (level) {
-      case "top": return this.getTop(key);
-      case "bottom": return this.getBottom(key);
+      switch (level) {
+        case "top": return this.getTop(key);
+        case "bottom": return this.getBottom(key);
+      }
     }
-  }
 
-  getAll (options: getElementOptions[]) {
+    //@ts-ignore
     return options.map(option => this.get(option));
   }
+
+  /** Return all elements in graph in insertion order. */
+  getAll () {
+    const returns: T[] = [];
+    for(const element of this) {
+      returns.push(element);
+    }
+    return returns;
+  }
+
 
   [Symbol.iterator]() { 
     let next = this.head;
