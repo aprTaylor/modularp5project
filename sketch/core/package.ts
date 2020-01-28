@@ -1,9 +1,9 @@
-import Module from "./module";
+//import Module from "./module";
 import uuid from "uuid/v4"
 
 
 export default class Package {
-  modules: Map<string, Module>;
+  /*modules: Map<string, Module>;
   readonly id: string;
 
   constructor (modules: Module[] = [], options?: {}) {
@@ -42,7 +42,7 @@ export default class Package {
     onEach(this.modules, mod => mod.update(this))
   }
 
-  /** Returns modules as object */
+  // Returns modules as object 
   getMods (): Record<string, Module> {
     const obj = {};
     for (let [key, value] of this.modules) {
@@ -61,7 +61,7 @@ export default class Package {
 
   draw () {
     //For children to implement
-  }
+  }*/
 }
 
 function onEach<K, V> (map: Map<K, V>, fn: (item: V) => void) {

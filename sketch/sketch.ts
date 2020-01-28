@@ -15,7 +15,7 @@ function sketch (p: p5) {
         p.createCanvas(p.windowWidth, p.windowHeight);
         p.rectMode(p.CENTER);
         //colors = ColorHelper.getColorsArray(squares);
-        packageManager = new PackageManager()
+        packageManager = new PackageManager({sketch: p5})
             .add(Mover(p))
     }
 

@@ -1,19 +1,20 @@
 import uuid from "uuid/v4";
+import p5 from "p5"
 import Package from "./package";
 import { onEach } from "../utils";
 import Graph, { getElementOptions } from "../utils/structures/Graph";
-import Module from "./module";
+import { Module } from "./interface";
 import { forceArray } from "../utils/list";
 
 export type System = (pm: PackageManager) => void
 export default class PackageManager {
   //Package id on top, Component name on bottom
   map: Graph<Module>
-  systems: Array<System>
+  sketch: p5;
 
-  constructor({systems}: {systems: Array<System>}) {
+  constructor({sketch}: {sketch: p5}) {
     this.map = new Graph();
-    this.systems = systems;
+    this.sketch = sketch;
   }
 
   add (mods: Module[]) {
@@ -24,14 +25,20 @@ export default class PackageManager {
     return this;
   }
 
-  /** Get modules by package id or get siblings of a mod */
+  /** Get modules by package id or get siblings of a mod.
+   * @returns An object indexed by gotten module names
+   */
   get (id: string | Module) {
-    if (typeof id === 'string') return this.map.getTop(id);
+    const mods = (typeof id === 'string')? 
+      this.map.getTop(id) :
+      this.map.getSiblings(id, 'bottom')
 
-    return this.map.getSiblings(id, 'bottom');
+    return mods.reduce((obj, item) => {
+      obj[item.name] = item;
+      return obj;
+    }, ({} as Record<string, Module>));
   }
 
-  //TODO: ALLOW MODIFICATION OF ALL MODULES IN A PACKAGE (GET SIBLINGS)
   getByMod (names: string | string[]) {
     const mods = forceArray(names);
     const uMods = new Set<Module>();
@@ -50,13 +57,13 @@ export default class PackageManager {
 
 
   remove (id) {
-    //TODO
+    //TODO: this.map.remove
     //this.map.remove
     return this;
   }
 
-  update () {
-    this.systems.forEach(system => system(this));
+  update (systems: System[]) {
+    systems.forEach(system => system(this));
   }
 
   
