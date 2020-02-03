@@ -54,9 +54,12 @@ export default class PackageManager {
 
 
 
-  remove (id) {
-    //TODO: this.map.remove
-    //this.map.remove
+  //TODO: Remove empty module name nodes?
+  /** Remove either remove entire package and all its modules or a singular module */
+  remove (id: string | Module) {
+    if(typeof id !== "string") this.map.remove(id);
+    else this.map.removeByKey('top', id);
+
     return this;
   }
 
