@@ -1,6 +1,6 @@
 {
     "compilerOptions": {
-        "target": "esnext",
+        "target": "es2018",
         "moduleResolution": "node",
         "allowJs": true,
         "isolatedModules": true,
@@ -10,9 +10,10 @@
         //"sourceRoot": "./sketch/*",
         "sourceMap": true,
         //"module": "commonjs",
-        "esModuleInterop": true
+        "esModuleInterop": true,
+        "types": ["cypress"]
     },
 	"include": [
-		"sketch", "webpack.config.js"
+		"sketch", "webpack.config.js", "test"
 	]
 }

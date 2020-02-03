@@ -1,17 +1,15 @@
 import p5 from "p5"
-import Module from "../../core/module";
-import { IsVector } from "../../core/interface";
+import { IsVector, Module } from "../../core/interface";
 
 p5.Vector
 
-export default class Vector extends Module {
+export default class Vector implements Module {
   name = "vector"
   x: number
   y: number
   limit?: number
 
-  constructor (sketch: p5, x = 0, y = 0, limit?: number) {
-    super(sketch);
+  constructor (x = 0, y = 0, limit?: number) {
     this.x = x;
     this.y = y;
     this.limit = limit;
@@ -19,29 +17,37 @@ export default class Vector extends Module {
 
 
   /* Add another 2D vector  */
-  add(obj: {x: number, y: number}, y?: number): this 
-  add(x: number, y: number): this
-  add(x: number | any, y?: number): this {
+  add(sketch: p5, obj: {x: number, y: number}, y?: number): this 
+  add(sketch: p5, x: number, y: number): this
+  add(sketch: p5, x: number | any, y?: number): this {
     if(typeof x != "number") {
       y = x.y;
       x = x.x;
     }  
 
-    this.fromVector(this.toVector().add(x, y));
+    this.fromVector(this.toVector(sketch).add(x, y));
 
     return this;
   }
 
   /* Subtract another 2D vector  */
-  sub(obj: {x: number, y: number}, y?: number): this 
-  sub(x: number, y: number): this
-  sub(x: number | any, y?: number): this {
+  sub(sketch: p5, obj: {x: number, y: number}, y?: number): this 
+  sub(sketch: p5, x: number, y: number): this
+  sub(sketch: p5, x: number | any, y?: number): this {
     if(typeof x != "number") {
       y = x.y;
       x = x.x;
     }  
 
-    this.fromVector(this.toVector().sub(x, y));
+    this.fromVector(this.toVector(sketch).sub(x, y));
+
+    return this;
+  }
+
+
+  /* Multiply vector by a constant */
+  mult(sketch: p5, x: number): this {
+    this.fromVector(this.toVector(sketch).mult(x));
 
     return this;
   }
@@ -60,8 +66,8 @@ export default class Vector extends Module {
 
 
   /** Cast to a vector. Auto limits vector if limit is specified */
-  toVector () {
-    let vec = this.sketch.createVector(this.x, this.y);
+  toVector (sketch: p5) {
+    let vec = sketch.createVector(this.x, this.y);
     if(this.limit) vec.limit(this.limit);
     return vec;
   }

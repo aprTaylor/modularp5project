@@ -1,5 +1,8 @@
+//TODO: REMOVE
+
 import p5 from "p5"
 import PackageManager from "./core/packageManager";
+import Systems from "./systems"
 import Package from "./core/package";
 import Line from "./modules/Line";
 import Mouse from "./modules/Mouse";
@@ -13,17 +16,23 @@ function sketch (p: p5) {
         p.createCanvas(p.windowWidth, p.windowHeight);
         p.rectMode(p.CENTER);
         //colors = ColorHelper.getColorsArray(squares);
-        packageManager = new PackageManager()
+        packageManager = new PackageManager({sketch: p})
             .add(Mover(p))
     }
 
-    p.draw = function draw() {
+    p.draw = function () {
 
         p.background(255);
     
-        packageManager.update();
-        packageManager.draw();
-    }    
+        packageManager.update(Systems);
+        //packageManager.draw();
+    }
+    
+
+/*
+    p.mousePressed = function () {
+        packageManager.mousePressed();
+    }*/
 }
 
-new p5(sketch)
+new p5(sketch);
