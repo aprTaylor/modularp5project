@@ -4,6 +4,8 @@ Create P5 projects in a modular way
 
 [Live Here](https://agray5.github.io/modularp5project/)
 
+Credit to the [_Nature of Code_](https://natureofcode.com) as a reference for demoing. 
+
 ## Usage
 Add entities as a collection of components
 ```js

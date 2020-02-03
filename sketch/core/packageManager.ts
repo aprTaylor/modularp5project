@@ -1,7 +1,5 @@
 import uuid from "uuid/v4";
 import p5 from "p5"
-import Package from "./package";
-import { onEach } from "../utils";
 import Graph, { getElementOptions } from "../utils/structures/Graph";
 import { Module } from "./interface";
 import { forceArray } from "../utils/list";

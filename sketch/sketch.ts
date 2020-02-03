@@ -25,7 +25,6 @@ function sketch (p: p5) {
         p.background(255);
     
         packageManager.update(Systems);
-        //packageManager.draw();
     }
     
 
