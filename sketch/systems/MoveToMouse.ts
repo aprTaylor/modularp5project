@@ -8,7 +8,7 @@ import mouseVector from "../utils/p5";
 const MoveToMouse : System = (pm: PackageManager) => {
 
   const mods = pm.getByMod('moveToMouse');
-
+  console.log("MODS", mods.length)
   mods.forEach(mod => {
     const {acceleration, velocity, location} = pm.get(mod);
     

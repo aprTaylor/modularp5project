@@ -4,8 +4,6 @@ import Velocity from "../modules/Physics/Velocity";
 import Acceleration from "../modules/Physics/Acceleration";
 import Location from "../modules/Location"
 import { withDefault } from "../utils";
-import MoveToMouse from "../modules/Physics/MoveToMouse";
-import BoundToView from "../modules/View/BoundToView";
 import Ellipse from "../modules/Ellipse";
 import Tags from "../Tags"
 

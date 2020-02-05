@@ -2,10 +2,6 @@
 import p5 from "p5"
 import PackageManager from "./core/packageManager";
 import Systems from "./systems"
-import Package from "./core/package";
-import Line from "./modules/Line";
-import Mouse from "./modules/Mouse";
-import LineToMouse from "./modules/LineToMouse";
 import Mover from "./creators/mover";
 
 let packageManager: PackageManager;
@@ -16,6 +12,7 @@ function sketch (p: p5) {
         p.rectMode(p.CENTER);
         //colors = ColorHelper.getColorsArray(squares);
         packageManager = new PackageManager({sketch: p})
+            .add(Mover(p))
             .add(Mover(p))
     }
 

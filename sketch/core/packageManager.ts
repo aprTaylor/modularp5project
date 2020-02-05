@@ -64,6 +64,8 @@ export default class PackageManager {
   }
 
   update (systems: System[]) {
+    for(const ele of this.map) console.log("ELE", ele)
+    console.log("++++++++++++++++++++++++++++++++++++++++++++++")
     systems.forEach(system => system(this));
   }
 

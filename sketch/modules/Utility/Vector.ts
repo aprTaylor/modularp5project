@@ -52,14 +52,6 @@ export default class Vector implements Module {
     return this;
   }
 
-
-  /* Multiply vector by a constant */
-  mult(x: number): this {
-    this.fromVector(this.toVector().mult(x));
-
-    return this;
-  }
-
   /* Set vector from p5 vector. Will limit if limit is set.*/
   fromVector (vec: p5.Vector) {
     const fromVec = vec.copy();

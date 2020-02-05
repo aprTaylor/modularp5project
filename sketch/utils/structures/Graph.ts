@@ -121,12 +121,14 @@ export default class Graph<T> {
   bottom: Record<string, OneWayNode<T>>;
   head: null | TwoWayNode<T>;
   tail: null | TwoWayNode<T>;
+  length: number;
 
   constructor () {
     this.top = {};
     this.bottom = {};
     this.head = null;
     this.tail = null;
+    this.length = 0;
   }
 
   private validateKey (key: string, obj: Record<string, OneWayNode<T>>, suppressWarn = false) {
@@ -158,6 +160,7 @@ export default class Graph<T> {
 
   /** Remove key and delete all elements that it points to. USE WITH CAUTION. */
   removeByKey(level: Level, key: string) { 
+    this.length -= this[level][key].to.length;
     this[level][key].delete();
     delete this[level][key];
 
@@ -171,7 +174,10 @@ export default class Graph<T> {
       // Delete all node references attached to node
       if(found === this.tail) this.tail = this.tail.prev;
       else if (found === this.head) this.head = this.head.next;
-      if(found) found.delete();
+      if(found) {
+        found.delete(); 
+        this.length--;
+      }
     });
 
     return this;
@@ -201,10 +207,11 @@ export default class Graph<T> {
 
     const elements = forceArray(element);
     elements.forEach(element => {
-      let node = this.find(element);
-      
+      let node = null//this.find(element);
+
       //Set up node if it does not exist
       if (!node) {
+        console.log("NEXT")
         node = new TwoWayNode<T>(element);
 
         //Chain node
@@ -213,6 +220,8 @@ export default class Graph<T> {
 
         if(!this.head) this.head = node;
         this.tail = node;
+
+        this.length++;
       }
 
       //Add node to given record
