@@ -1,7 +1,5 @@
 import uuid from "uuid/v4";
 import p5 from "p5"
-import Package from "./package";
-import { onEach } from "../utils";
 import Graph, { getElementOptions } from "../utils/structures/Graph";
 import { Module } from "./interface";
 import { forceArray } from "../utils/list";
@@ -48,7 +46,7 @@ export default class PackageManager {
       this
         .map
         .get(query)
-        .forEach(mod => uMods.add(mod))
+        ?.forEach(mod => uMods.add(mod))
     });
 
     return Array.from(uMods);
@@ -56,9 +54,12 @@ export default class PackageManager {
 
 
 
-  remove (id) {
-    //TODO: this.map.remove
-    //this.map.remove
+  //TODO: Remove empty module name nodes?
+  /** Remove either remove entire package and all its modules or a singular module */
+  remove (id: string | Module) {
+    if(typeof id !== "string") this.map.remove(id);
+    else this.map.removeByKey('top', id);
+
     return this;
   }
 

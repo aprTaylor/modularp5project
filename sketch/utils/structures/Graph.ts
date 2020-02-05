@@ -14,6 +14,28 @@ export class OneWayNode<T> {
     return this;
   }
 
+  wipe () {
+    this.to = null;
+  }
+
+  /** Remove references from nodes that this is pointing to and delete inner references.
+   * Similar to delete() but nodes pointed to are not deleted.
+   */
+  untether () {
+    this.to.forEach(node => {
+      node.remove('top', this);
+      node.remove('bottom', this);
+    });
+
+    this.wipe();
+  }
+
+  /** Delete all nodes that this is pointing to and all inner references. */
+  delete () {
+    this.to.forEach(node => node.delete());
+    this.wipe();
+  }
+
   remove (node: TwoWayNode<T>) {
    this.to = without([node], this.to);
    return this;
@@ -58,6 +80,7 @@ export class TwoWayNode<T> {
 
   /** Remove all references to this node in graph and its references */
   delete () {
+    //Remove from all oneway node references of this node
     this.top.forEach(node => {
       node.remove(this);
     });
@@ -65,6 +88,11 @@ export class TwoWayNode<T> {
       node.remove(this);
     });
 
+    //Fill soon to be gap in chain
+    this.next.prev = this.prev;
+    this.prev.next = this.next;
+
+    //Erase all references within this node
     this.element = null;
     this.bottom = null;
     this.top = null;
@@ -117,6 +145,36 @@ export default class Graph<T> {
     }
 
     return true;
+  }
+
+
+  /** Remove key and remove all references to it. Keeps elements intact. */
+  removeKey(level: Level, key: string) {
+    this[level][key].untether();
+    delete this[level][key];
+
+    return this;
+  }
+
+  /** Remove key and delete all elements that it points to. USE WITH CAUTION. */
+  removeByKey(level: Level, key: string) { 
+    this[level][key].delete();
+    delete this[level][key];
+
+    return this;
+  }
+
+  /** Remove only the element(s). Keys remain intact. */
+  remove (element: T | T[]) {
+    forceArray(element).forEach(element => {
+      const found = this.find(element);
+      // Delete all node references attached to node
+      if(found === this.tail) this.tail = this.tail.prev;
+      else if (found === this.head) this.head = this.head.next;
+      if(found) found.delete();
+    });
+
+    return this;
   }
 
 
@@ -202,11 +260,11 @@ export default class Graph<T> {
   }
 
   getTop (key: string) {
-    return this.top[key].to.map(node => node.element);
+    return this.top[key]?.to.map(node => node.element);
   }
 
   getBottom (key: string) {
-    return this.bottom[key].to.map(node => node.element);
+    return this.bottom[key]?.to.map(node => node.element);
   }
 
   /** Get siblings of node(s) */

@@ -12,6 +12,7 @@ export default class WindOnClick extends Module {
     super(sketch);
   }
 
+  /*
   init (pack: Package) {
     const { mouse, force } = pack.getMods();
 
@@ -24,5 +25,5 @@ export default class WindOnClick extends Module {
     else {
       console.warn("windOnClick is missing modules");
     }
-  }
+  }*/
 }

@@ -1,26 +1,20 @@
 import p5, {Vector} from "p5"
-import Module from "../../core/module";
-import Package from "../../core/package";
-import Mouse from "../Mouse";
-import Acceleration from "./Acceleration";
-import Velocity from "./Velocity";
-import Location from "../Location"
-import mouseVector from "../../utils/p5";
+import { Module } from "../../core/interface"
 
 
 /** Accumulates forces into acceleration. 
  * Use after modules that exert force! Update will clear acceleration.
  * 
  * Required Modules: Acceleration */
-export default class Force extends Module {
+export default class Force implements Module {
   name = "force"
 
-  constructor (sketch: p5) {
-    super(sketch);
+  constructor () {
   }
 
 
   /** Add force to acceleration */
+  /*
   apply(pack: Package, obj: {x: number, y: number}): this 
   apply(pack: Package, x: number, y: number): this
   apply(pack: Package, x: number | any, y?: number): this { 
@@ -46,6 +40,6 @@ export default class Force extends Module {
       console.warn("Force is missing modules.")
     }
 
-  }
+  }*/
 
 }
